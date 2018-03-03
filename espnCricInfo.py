@@ -1,6 +1,4 @@
 #!/usr/bin/python
-import sys
-sys.path.append("/usr/lib/python3/dist-packages/requests/__init__.py")
 import requests as rq
 import notify2 as nt
 import xml.etree.ElementTree as ET
@@ -64,8 +62,17 @@ def fetchScores(fileName):
                     feedDict["item"]=child[0].text
                     feedDict["link"]=child.find("guid").text
                     feedList.append(feedDict)
-    return feedList
 
+#----------------remove repeating Matches--------------------#
+    Links={}
+    for i in feedList:
+        link=i["link"].split(".html")[0].split("/")[6]
+        if(Links.get(link,0)==0):
+           Links[link]=1
+        else:
+            feedList.remove(i)
+    return feedList
+#------------------------------------------------------------#
 def writeCsv(csvFileName,feedList):
     with open(csvFileName,"w") as csvfile:
         csvObject=csv.DictWriter(csvfile,fieldnames=heading)
@@ -92,3 +99,4 @@ def main():
     showNotification(csvFileName)
 if __name__=="__main__":
     main()
+
