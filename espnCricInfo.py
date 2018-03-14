@@ -3,7 +3,8 @@ import requests as rq
 import notify2 as nt
 import xml.etree.ElementTree as ET
 import csv
-
+import schedule
+import time
 #------------CONSTANTS------------#
 icon="/home/nikmul19/Desktop/espn.png"
 csvFileName="/home/nikmul19/Desktop/data.csv"
@@ -74,6 +75,7 @@ def fetchScores(fileName):
     return feedList
 #------------------------------------------------------------#
 def writeCsv(csvFileName,feedList):
+    print(feedList)
     with open(csvFileName,"w") as csvfile:
         csvObject=csv.DictWriter(csvfile,fieldnames=heading)
         csvObject.writeheader()
@@ -97,6 +99,14 @@ def main():
     feed=fetchScores(fileName)
     writeCsv(csvFileName,feed)
     showNotification(csvFileName)
-if __name__=="__main__":
+
+def job():
     main()
+    return
+
+schedule.every(10).minutes.do(job)
+while True:
+    schedule.run_pending()
+    time.sleep(10) # wait 10 seconds
+
 
